@@ -45,7 +45,7 @@ public class Main implements Plugin {
     private LinkedList<ChatPhrase> history;
     private ArrayList<HashMap<String,Object>> historyToChat(){
         ArrayList<HashMap<String,Object>> ret=new ArrayList<>();
-        List<ChatPhrase> list=history.subList(Math.max(history.size() - 6, 0), history.size());
+        List<ChatPhrase> list=history.subList(Math.max(history.size() - 8, 0), history.size());
         HashMap<String,Object> current;
         if(list.size()==0){
             ret.add(new ChatPhrase("История сообщений пуста",2).toMap());
@@ -79,10 +79,16 @@ public class Main implements Plugin {
             put("msgTag", "chat:setup");
         }});
         pluginProxy.addMessageListener("gui:say", (sender, tag, data) -> {
-            history.add(new ChatPhrase((String) ((HashMap<String,Object>) data).getOrDefault("text", ""),0));
+            String text;
+            if(data instanceof Map){
+                text=(String) ((HashMap<String,Object>) data).getOrDefault("text", "");
+            } else {
+                text=data.toString();
+            }
+            history.add(new ChatPhrase(text,0));
             setupChat();
         });
-        pluginProxy.addMessageListener("chat:user-said", (sender, tag, data) -> {
+        pluginProxy.addMessageListener("DeskChan:user-said", (sender, tag, data) -> {
             history.add(new ChatPhrase((String) ((HashMap<String,Object>) data).getOrDefault("value", ""),1));
             setupChat();
         });
@@ -98,7 +104,7 @@ public class Main implements Plugin {
             list.add(new HashMap<String, Object>() {{
                 put("id", "name");
                 put("type", "TextField");
-                put("enterTag","chat:user-said");
+                put("enterTag","DeskChan:user-said");
             }});
             list.add(new HashMap<String, Object>() {{
                 put("id", "textname");

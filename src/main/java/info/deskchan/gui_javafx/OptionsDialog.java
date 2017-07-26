@@ -159,12 +159,12 @@ class OptionsDialog extends TemplateBox {
 			put("type", "CheckBox");
 			put("hint",Main.getString("help.context_menu"));
 			put("label", Main.getString("enable_context_menu"));
-			put("value", Main.getProperty("character.enable_context_menu", "0").equals("1"));
+			put("value", Main.getProperty("character.enable_context_menu", "1").equals("1"));
 		}});
 		list.add(new HashMap<String, Object>() {{
 			put("id", "load_resource_pack");
 			put("type", "Button");
-			put("hint",Main.getString("help.resources"));
+			put("hint", Main.getString("help.resources"));
 			put("label", Main.getString("load_resource_pack"));
 			put("value", Main.getString("load"));
 		}});
@@ -211,6 +211,7 @@ class OptionsDialog extends TemplateBox {
 
 		TableColumn msgCol = new TableColumn(Main.getString("parameters"));
 		msgCol.setCellValueFactory(new PropertyValueFactory<CommandItem, String>("msgData"));
+		msgCol.setCellFactory(TextFieldTableCell.<CommandItem> forTableColumn());
 		msgCol.setOnEditCommit(ev -> {
 			TableColumn.CellEditEvent<CommandItem, String> event=(TableColumn.CellEditEvent<CommandItem, String>) ev;
 			CommandItem item = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -423,7 +424,7 @@ class OptionsDialog extends TemplateBox {
 		gridPane = new GridPane();
 		gridPane.getStyleClass().add("grid-pane");
 		Label label = new Label(CoreInfo.get("NAME") + " " + CoreInfo.get("VERSION"));
-		label.setFont(Font.font(20));
+		label.getStyleClass().add("header");
 		gridPane.add(label, 0, 0, 2, 1);
 		gridPane.add(new Label(Main.getString("about.site")), 0, 1);
 		Hyperlink hyperlink = new Hyperlink();
@@ -460,9 +461,7 @@ class OptionsDialog extends TemplateBox {
 							FileChooser packChooser=new FileChooser();
 							packChooser.setInitialDirectory(pluginProxy.getRootDirPath().toFile());
 							File f = packChooser.showOpenDialog(getDialogPane().getScene().getWindow());
-							pluginProxy.sendMessage("core:distribute-resources", new HashMap<String, Object>() {{
-								put("resourcesList", f.toString());
-							}});
+							pluginProxy.sendMessage("core:distribute-resources", f.toString());
 						} catch(Exception e){ }
 					});
 				}
